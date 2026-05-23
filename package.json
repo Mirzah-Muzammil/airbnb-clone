@@ -1,0 +1,12 @@
+{
+  "name": "airbnb-clone",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "bash ./scripts/dev.sh",
+    "backend:dev": "cd backend && PORT=5001 npm run dev",
+    "backend:seed": "cd backend && npm run seed",
+    "frontend:dev": "cd frontend && npm run dev",
+    "build": "cd frontend && npm run build && cd ../backend && npm run build"
+  }
+}
