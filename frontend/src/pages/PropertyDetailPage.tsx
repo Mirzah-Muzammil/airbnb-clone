@@ -3,6 +3,9 @@ import { Link, useParams } from "react-router-dom";
 import { apiFetch } from "../config/fetchConfig";
 import { formatCurrency } from "../utils/formatCurrency";
 import type { Property } from "../utils/types";
+import Loading from "../components/Loading";
+import ErrorBoundary from "../components/ErrorBoundary";
+import NotFound from "../components/NotFound";
 
 const PropertyDetailPage = () => {
   const { id } = useParams();
@@ -63,55 +66,15 @@ const PropertyDetailPage = () => {
   }, [id]);
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen px-4 py-8 text-ink">
-        <div className="mx-auto w-full max-w-5xl">
-          <div className="h-96 animate-pulse rounded-3xl border border-clay/40 bg-white/70" />
-        </div>
-      </div>
-    );
+    return <Loading />;
   }
 
   if (isError) {
-    return (
-      <div className="min-h-screen px-4 py-8 text-ink">
-        <div className="mx-auto w-full max-w-3xl rounded-3xl border border-clay/40 bg-white/80 p-8">
-          <h1 className="text-2xl font-semibold text-ink">
-            Unable to load stay
-          </h1>
-          <p className="mt-2 text-sm text-ink/70">
-            Please check the backend server and try again.
-          </p>
-          <Link
-            to="/"
-            className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-coral"
-          >
-            ← Back to Listings
-          </Link>
-        </div>
-      </div>
-    );
+    return <ErrorBoundary children />;
   }
 
   if (isNotFound || !property) {
-    return (
-      <div className="min-h-screen px-4 py-8 text-ink">
-        <div className="mx-auto w-full max-w-3xl rounded-3xl border border-clay/40 bg-white/80 p-8">
-          <h1 className="text-2xl font-semibold text-ink">
-            Property not found
-          </h1>
-          <p className="mt-2 text-sm text-ink/70">
-            The stay you are looking for does not exist or has been removed.
-          </p>
-          <Link
-            to="/"
-            className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-coral"
-          >
-            ← Back to Listings
-          </Link>
-        </div>
-      </div>
-    );
+    return <NotFound />;
   }
 
   const activeImageUrl = property.images[activeImage] ?? property.images[0];

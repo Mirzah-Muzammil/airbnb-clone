@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
 import FilterPanel from "../components/FilterPanel";
-import Navbar from "../components/Navbar";
 import PropertyCard from "../components/PropertyCard";
 import { apiFetch } from "../config/fetchConfig";
-import { useDebounce } from "../hooks/useDebounce";
 import type { Property } from "../utils/types";
 
 const HomePage = () => {
@@ -11,19 +9,8 @@ const HomePage = () => {
   const [filteredProperties, setFilteredProperties] = useState<Property[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
-  const [query, setQuery] = useState("");
-  const [minPrice, setMinPrice] = useState("");
-  const [maxPrice, setMaxPrice] = useState("");
-  const [minRating, setMinRating] = useState("");
+  const [hasActiveFilters, setHasActiveFilters] = useState(false);
   const [favoriteIds, setFavoriteIds] = useState<number[]>([]);
-
-  const debouncedQuery = useDebounce(query);
-
-  const hasActiveFilters =
-    query.length > 0 ||
-    minPrice.length > 0 ||
-    maxPrice.length > 0 ||
-    minRating.length > 0;
 
   useEffect(() => {
     let isMounted = true;
@@ -59,26 +46,40 @@ const HomePage = () => {
     };
   }, []);
 
-  useEffect(() => {
-    if (!hasActiveFilters) {
+  const handleSearch = ({
+    query,
+    minPrice,
+    maxPrice,
+    minRating,
+  }: {
+    query: string;
+    minPrice: string;
+    maxPrice: string;
+    minRating: string;
+  }) => {
+    const isActive =
+      query.length > 0 ||
+      minPrice.length > 0 ||
+      maxPrice.length > 0 ||
+      minRating.length > 0;
+
+    if (!isActive) {
+      setHasActiveFilters(false);
       setFilteredProperties(allProperties);
       return;
     }
 
-    const controller = new AbortController();
+    setHasActiveFilters(true);
     setIsLoading(true);
     setIsError(false);
 
     const params = new URLSearchParams();
-    if (debouncedQuery) params.set("search", debouncedQuery);
+    if (query) params.set("search", query);
     if (minPrice) params.set("minPrice", minPrice);
     if (maxPrice) params.set("maxPrice", maxPrice);
     if (minRating) params.set("rating", minRating);
 
-    apiFetch({
-      path: `/api/properties?${params.toString()}`,
-      signal: controller.signal,
-    })
+    apiFetch({ path: `/api/properties?${params.toString()}` })
       .then((response) => {
         if (!response.ok) {
           throw new Error("Failed to load properties");
@@ -88,25 +89,18 @@ const HomePage = () => {
       .then((data: Property[]) => {
         setFilteredProperties(data);
       })
-      .catch((error) => {
-        if (error instanceof DOMException && error.name === "AbortError") {
-          return;
-        }
+      .catch(() => {
         setIsError(true);
       })
       .finally(() => {
         setIsLoading(false);
       });
+  };
 
-    return () => controller.abort();
-  }, [
-    allProperties,
-    debouncedQuery,
-    minPrice,
-    maxPrice,
-    minRating,
-    hasActiveFilters,
-  ]);
+  const handleClear = () => {
+    setHasActiveFilters(false);
+    setFilteredProperties(allProperties);
+  };
 
   const toggleFavorite = (id: number) => {
     setFavoriteIds((prev) =>
@@ -116,23 +110,10 @@ const HomePage = () => {
 
   return (
     <div className="min-h-screen">
-      <Navbar />
       <main className="mx-auto w-full max-w-7xl px-6 pb-8 pt-8">
         <FilterPanel
-          query={query}
-          onQueryChange={setQuery}
-          minPrice={minPrice}
-          maxPrice={maxPrice}
-          minRating={minRating}
-          onMinPriceChange={setMinPrice}
-          onMaxPriceChange={setMaxPrice}
-          onMinRatingChange={setMinRating}
-          onClear={() => {
-            setQuery("");
-            setMinPrice("");
-            setMaxPrice("");
-            setMinRating("");
-          }}
+          onSearch={handleSearch}
+          onClear={handleClear}
           hasActiveFilters={hasActiveFilters}
         />
 
