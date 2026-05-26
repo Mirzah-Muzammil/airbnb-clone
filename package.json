@@ -8,5 +8,6 @@
     "backend:seed": "cd backend && npm run seed",
     "frontend:dev": "cd frontend && npm run dev",
     "build": "cd frontend && npm run build && cd ../backend && npm run build"
-  }
+  },
+  "dependencies": {}
 }

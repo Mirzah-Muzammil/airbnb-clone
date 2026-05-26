@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import FilterPanel from "../components/FilterPanel";
+import MobileFooter from "../components/MobileFooter";
 import PropertyCard from "../components/PropertyCard";
 import { apiFetch } from "../config/fetchConfig";
 import type { Property } from "../utils/types";
@@ -110,7 +111,7 @@ const HomePage = () => {
 
   return (
     <div className="min-h-screen">
-      <main className="mx-auto w-full max-w-7xl px-6 pb-8 pt-8">
+      <main className="w-full px-6 pb-24 pt-8 md:pb-8">
         <FilterPanel
           onSearch={handleSearch}
           onClear={handleClear}
@@ -155,7 +156,7 @@ const HomePage = () => {
           )}
 
           {!isLoading && !isError && filteredProperties.length > 0 && (
-            <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
+            <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-6">
               {filteredProperties.map((property) => (
                 <PropertyCard
                   key={property.id}
@@ -168,6 +169,7 @@ const HomePage = () => {
           )}
         </div>
       </main>
+      <MobileFooter />
     </div>
   );
 };

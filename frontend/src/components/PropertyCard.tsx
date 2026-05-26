@@ -26,7 +26,7 @@ const PropertyCard = ({
       />
 
       {/* Badges */}
-      <div className="absolute left-4 top-4 rounded-full bg-white px-3 py-1.5 text-sm font-semibold text-gray-900 shadow-md">
+      <div className="absolute left-4 top-4 rounded-full bg-white px-2 py-1.5 text-[10px] font-semibold text-gray-900 shadow-md">
         Guest favourite
       </div>
 
@@ -60,7 +60,7 @@ const PropertyCard = ({
     {/* Content */}
     <div className="mt-3 flex flex-col gap-0.5 px-0.5">
       <div className="flex items-start justify-between gap-3">
-        <h3 className="truncate font-semibold text-gray-900 text-base">
+        <h3 className="truncate font-semibold text-gray-900 text-sm">
           {property.title}
         </h3>
       </div>
