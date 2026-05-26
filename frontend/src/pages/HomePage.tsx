@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import FilterPanel from "../components/FilterPanel";
 import MobileFooter from "../components/MobileFooter";
 import PropertyCard from "../components/PropertyCard";
 import { apiFetch } from "../config/fetchConfig";
 import type { Property } from "../utils/types";
+import FilterPanel from "../components/FilterPanel";
 
 const HomePage = () => {
   const [allProperties, setAllProperties] = useState<Property[]>([]);
